@@ -40,7 +40,7 @@ This project is a full-stack application built with the MERN stack and modern de
   </tr>
   <tr>
     <td><img src="Home.png" alt="Home Screen" width="300"/></td>
-    <td><img src="My_space.png" alt="My Space Screen" width="300"/></td>
+    <td><img src="My_Space.png" alt="My Space Screen" width="300"/></td>
   </tr>
 </table>
 
