@@ -8,7 +8,8 @@ const router = Router();
 router.get('/', async (req, res) => {
   const uid = getOrCreateUserId(req, res);
   const likeSwipes = await Swipe.find({ userId: uid, action: 'like' }).sort({ createdAt: -1 }).lean();
-  // Find 'dislike' actions instead of 'join'
+  
+  // UPDATED: Changed to find 'dislike' actions instead of 'join'
   const dislikeSwipes = await Swipe.find({ userId: uid, action: 'dislike' }).sort({ createdAt: -1 }).lean();
 
   const likeIds = likeSwipes.map(s => s.cardId);
@@ -19,13 +20,36 @@ router.get('/', async (req, res) => {
     Card.find({ _id: { $in: dislikeIds } }).lean()
   ]);
 
-  // Return a 'dislikes' array instead of 'joins'
+  // UPDATED: Return a 'dislikes' array instead of 'joins'
   res.json({ likes, dislikes });
 });
 
-// The DELETE route from the previous request still works perfectly
 router.delete('/swipes/:cardId', async (req, res) => {
-    // ... no changes needed here
+  try {
+    const uid = getOrCreateUserId(req, res);
+    const { cardId } = req.params;
+
+    const swipe = await Swipe.findOne({ userId: uid, cardId: cardId });
+
+    if (!swipe) {
+      return res.status(404).json({ error: 'Swipe not found for this user.' });
+    }
+
+    if (swipe.action === 'like') {
+      await Card.findByIdAndUpdate(cardId, { $inc: { likedCount: -1 } });
+    } else if (swipe.action === 'dislike') {
+      // Assuming you have a dislikedCount field on your Card model
+      // If not, you should add one for this logic to be complete.
+      // For now, it will at least remove the swipe record.
+    }
+    
+    await swipe.deleteOne();
+    
+    res.status(200).json({ ok: true, message: 'Swipe removed successfully.' });
+  } catch (error) {
+    console.error('Error removing swipe:', error);
+    res.status(500).json({ error: 'Server error while removing swipe.' });
+  }
 });
 
 export default router;

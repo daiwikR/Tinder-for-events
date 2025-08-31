@@ -3,13 +3,13 @@ import type { CardType } from '../types';
 
 export default function EventCard({ card }: { card: CardType }) {
   const liked = card.likedCount || 0;
-  const joined = card.joinedCount || 0;
-  const total = liked + joined;
+  const disliked = card.dislikedCount || 0; // Using dislikedCount now
+  const total = liked + disliked;
   const ratio = total > 0 ? Math.round((liked / total) * 100) : null;
 
   return (
-    // UPDATED: Added `draggable={false}` and `select-none` to the root element to fix janky swiping
-    <div 
+    // UPDATED: Added `draggable={false}` and `select-none` to the root element
+    <div
       className="w-[360px] h-[520px] bg-white rounded-3xl shadow-lg overflow-hidden flex flex-col select-none"
       draggable={false}
     >
@@ -19,7 +19,7 @@ export default function EventCard({ card }: { card: CardType }) {
           src={card.image || 'https://picsum.photos/800/600'}
           alt={card.title}
           className="w-full h-full object-cover"
-          // UPDATED: Removed `draggable` property from the image as it's now on the parent
+          // `draggable` is no longer needed here
         />
         {ratio !== null && (
           <div className="absolute top-3 right-3 bg-white/90 px-3 py-1 rounded-full text-xs font-medium shadow">
@@ -42,7 +42,6 @@ export default function EventCard({ card }: { card: CardType }) {
         )}
         <p className="text-sm text-gray-700 line-clamp-3">{card.description}</p>
       </div>
-      {/* UPDATED: Changed hint text from "Join" to "Dislike" */}
       <div className="px-4 pb-4 text-xs text-gray-500">
         Hint: Swipe left to <span className="font-medium">Dislike</span>, right to <span className="font-medium">Like</span>.
       </div>

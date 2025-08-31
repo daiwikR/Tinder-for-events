@@ -23,24 +23,28 @@ export default function Profile() {
 
   useEffect(() => {
     (async () => {
-      const res = await api.get('/api/profile');
-      const likedEvents = res.data.likes || [];
-      // UPDATED: Fetching `dislikes` from the API response
-      const dislikedEvents = res.data.dislikes || [];
+      try {
+        const res = await api.get('/api/profile');
+        const likedEvents = res.data.likes || [];
+        // UPDATED: Fetching `dislikes` from the API response
+        const dislikedEvents = res.data.dislikes || [];
 
-      setLikes(likedEvents);
-      setDislikes(dislikedEvents);
+        setLikes(likedEvents);
+        setDislikes(dislikedEvents);
 
-      const now = new Date();
-      const upcoming = likedEvents
-        .filter(event => event.eventDate && new Date(event.eventDate) > now)
-        .sort((a, b) => new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime());
-      
-      setUpcomingEvents(upcoming);
+        const now = new Date();
+        const upcoming = likedEvents
+          .filter(event => event.eventDate && new Date(event.eventDate) > now)
+          .sort((a, b) => new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime());
+        
+        setUpcomingEvents(upcoming);
+      } catch (error) {
+        console.error("Failed to load profile data", error);
+      }
     })();
   }, []);
 
-  // UPDATED: The handler now works with a `dislikes` listType
+  // UPDATED: The handler now correctly references 'dislikes'
   const handleRemove = async (cardId: string, listType: 'likes' | 'dislikes') => {
     if (listType === 'likes') {
       setLikes(current => current.filter(c => c._id !== cardId));
@@ -89,7 +93,7 @@ export default function Profile() {
         </div>
       </section>
 
-      {/* UPDATED: This entire section is changed from "Joined" to "Disliked" */}
+      {/* UPDATED: This section now correctly maps over `dislikes` and calls handleRemove */}
       <section>
         <h2 className="text-xl font-semibold mb-3">Disliked</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
