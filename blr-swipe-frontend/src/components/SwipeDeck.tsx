@@ -8,7 +8,7 @@ export default function SwipeDeck({ initialCards }: { initialCards: CardType[] }
   const [cards, setCards] = useState<CardType[]>(initialCards);
 
   const swiped = useCallback(async (dir: 'left' | 'right', card: CardType) => {
-    // UPDATED: Changed the left-swipe action from "join" to "dislike"
+    // Updated: Backend now accepts 'dislike' for left swipe
     const action = dir === 'left' ? 'dislike' : 'like';
     setCards(prev => prev.filter(c => c._id !== card._id)); // optimistic remove
     try {
@@ -46,7 +46,7 @@ export default function SwipeDeck({ initialCards }: { initialCards: CardType[] }
   return (
     <div className="relative h-[560px]">
       <div className="relative w-full h-full flex items-center justify-center">{children}</div>
-      {/* UPDATED: Changed the hint text from "Join" to "Dislike" */}
+      {/* Updated: Left swipe means "Dislike", right swipe means "Like" */}
       <div className="mt-4 flex items-center justify-center gap-3 text-sm text-gray-600">
         <span className="px-3 py-1 rounded-full bg-gray-100">⬅️ Dislike</span>
         <span className="px-3 py-1 rounded-full bg-gray-100">Like ➡️</span>

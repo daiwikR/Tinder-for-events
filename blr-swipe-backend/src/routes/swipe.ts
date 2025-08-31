@@ -7,7 +7,7 @@ const router = Router();
 
 router.post('/', async (req, res) => {
   const { cardId, action } = req.body || {};
-  if (!cardId || !['like', 'join'].includes(action)) {
+  if (!cardId || !['like', 'dislike'].includes(action)) {
     return res.status(400).json({ error: 'Invalid payload' });
   }
 
@@ -16,8 +16,9 @@ router.post('/', async (req, res) => {
   const existing = await Swipe.findOne({ userId: uid, cardId });
   if (existing) {
     if (existing.action !== action) {
+      // Decrement the previous action's count
       await Card.findByIdAndUpdate(cardId, {
-        $inc: existing.action === 'like' ? { likedCount: -1 } : { joinedCount: -1 }
+        $inc: existing.action === 'like' ? { likedCount: -1 } : { dislikedCount: -1 }
       });
       existing.action = action;
       await existing.save();
@@ -26,8 +27,9 @@ router.post('/', async (req, res) => {
     await Swipe.create({ userId: uid, cardId, action });
   }
 
+  // Increment the new action's count
   await Card.findByIdAndUpdate(cardId, {
-    $inc: action === 'like' ? { likedCount: 1 } : { joinedCount: 1 }
+    $inc: action === 'like' ? { likedCount: 1 } : { dislikedCount: 1 }
   });
 
   res.json({ ok: true });

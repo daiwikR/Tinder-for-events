@@ -38,9 +38,7 @@ router.delete('/swipes/:cardId', async (req, res) => {
     if (swipe.action === 'like') {
       await Card.findByIdAndUpdate(cardId, { $inc: { likedCount: -1 } });
     } else if (swipe.action === 'dislike') {
-      // Assuming you have a dislikedCount field on your Card model
-      // If not, you should add one for this logic to be complete.
-      // For now, it will at least remove the swipe record.
+      await Card.findByIdAndUpdate(cardId, { $inc: { dislikedCount: -1 } });
     }
     
     await swipe.deleteOne();

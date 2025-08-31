@@ -7,5 +7,5 @@ export type CardType = {
   category?: string;
   eventDate?: string;
   likedCount?: number;
-  joinedCount?: number;
+  dislikedCount?: number;
 };
