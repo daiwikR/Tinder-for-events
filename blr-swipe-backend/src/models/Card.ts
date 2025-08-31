@@ -8,7 +8,8 @@ const CardSchema = new Schema({
   category: { type: String, enum: ['brewery', 'restaurant', 'event', 'activity', 'other'], default: 'event' },
   eventDate: { type: Date },
   likedCount: { type: Number, default: 0 },
-  joinedCount: { type: Number, default: 0 },
+  // UPDATED: Replaced 'joinedCount' with 'dislikedCount'
+  dislikedCount: { type: Number, default: 0 },
   ownerId: { type: String, default: null },
   createdAt: { type: Date, default: Date.now }
 });
